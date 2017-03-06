@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, clx, cly, sx, sy, sf, aPace, myX, myY, cxs, cws, coxs; 
+    var gameOver;  
+    var currentWidth, cuurentLeft, canyonMoveCtr, canyonMovePace, canyonNarrowCtr, canyonNarrowPace;
+
+    // PT boat with submarines
+    // you are on the surface, they are below, 
+    // depth charges, 
+
+    function shoot() { 
+        if (sf<1.0) { 
+            sf = 2.0; 
+            sx = myX; 
+            sy = myY; 
+        }
+    }
+
+    function moveMe() { 
+        if (gameOver<1) { 
+            if ((theM.aDn>1.0)&&(myX>0)) { myX = myX-1.0; }
+            if ((theM.dDn>1.0)&&(myX<15)) { myX = myX+1.0; }
+            if (theM.spDn>1.0) { shoot(); }
+            theM.plot(myX,myY); 
+            theM.plot(myX,myY-1);
+        } else { 
+            theM.plot(myX-1,myY);
+            theM.plot(myX+1,myY);
+            theM.plot(myX-1,myY-1);
+            theM.plot(myX+1,myY-1);
+            theM.unplot(myX,myY); 
+            theM.unplot(myX,myY-1);
+        }
+        // wall ramming 
+        if (myX < cxs[14]+1) { gameOver = 2; }
+        if (myX < cxs[15]+1) { gameOver = 2; }
+        if (Math.abs(myX - coxs[14])<.5) { gameOver = 2; }
+        if (Math.abs(myX - coxs[15])<.5) { gameOver = 2; }
+        if (myX > (cxs[14]+cws[14]-1)) { gameOver = 2; }
+        if (myX > (cxs[15]+cws[15]-1)) { gameOver = 2; }
+    }
+
+
+    function moveShot() { 
+        if (sf>1.0) { 
+            sy = sy-1; 
+            if (sy<1) { sf = 0; }
+            theM.plot(sx,sy); 
+        }
+    }
+
+
+    function initCanyon() { 
+        cxs = new Array();
+        cws = new Array();
+        coxs = new Array();
+        var i;  
+        currentWidth = 12; 
+        currentLeft = 1;
+        canyonMoveCtr = 0; 
+        canyonMovePace = 5; 
+        for (i=0; i<16; i=i+1) { 
+            cxs[i] = currentLeft; 
+            cws[i] = currentWidth; 
+            coxs[i] = -1;
+        }
+        
+    }
+
+    // 16 rows of canyon, 
+    function moveCanyon() { 
+        var i, lx, ly, ltSd, rtSd, notAllDead; 
+
+        canyonMoveCtr = canyonMoveCtr +1; 
+        if ((canyonMoveCtr>canyonMovePace)&&(gameOver<1)) { 
+            canyonMoveCtr = 0; // move the canyon down
+
+            // move everything down one
+            for (i=15; i>0; i=i-1) {
+                cxs[i] = cxs[i-1];
+                cws[i] = cws[i-1];
+                coxs[i] = coxs[i-1];
+            }
+
+            // make the new row
+            if (currentLeft>0) { // maybe move left, if you can
+                if (Math.random()<.2) {
+                    currentLeft = currentLeft-1; 
+                }
+            }
+            if (currentLeft<(15-currentWidth)) {  // or maybe right?
+                if (Math.random()<.2) {
+                    currentLeft = currentLeft+1; 
+                }
+            }
+            if (currentWidth>4) { // maybe get narrower
+                if (Math.random()<.02) {
+                    currentWidth = currentWidth -1; 
+                }
+            } else { // but if totally narrow, level up!
+                currentLeft = 2; 
+                currentWidth = 12;
+                canyonMovePace -= 3;
+            }             
+
+            cxs[0] = currentLeft; 
+            cws[0] = currentWidth; 
+            if (Math.random()<.2) {
+                coxs[0] = currentLeft+1 + Math.floor(Math.random()*(currentWidth-2));
+            } else { coxs[i] = -1; }
+        }
+        for (i=0; i<16; i=i+1) { 
+            theM.plot(cxs[i], i);
+            theM.plot(cxs[i]+cws[i], i);
+            if (coxs[i]>0) { theM.plot(coxs[i], i); }
+        }
+    }
+
+    function animator() {
+        theM.wipe(); 
+        moveMe(); 
+        moveShot(); 
+        moveCanyon(); 
+        theM.redraw(); 
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        myX = 6;
+        myY = 15;
+        sf =0; 
+        initCanyon(); 
+        gameOver = 0; 
+        setInterval(animator, 50);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</body>
+</html>

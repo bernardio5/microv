@@ -1,0 +1,1 @@
+The microv project has been put under the MIT license by its author, Neal McDonald.
