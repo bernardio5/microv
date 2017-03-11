@@ -193,3 +193,62 @@ microVision.prototype = {
 
 
 
+
+
+
+
+function missile() {
+    this.x = -1;
+    this.y = -1;
+    this.dx = 0;
+    this.dy = 0;
+    this.flying = 0; 
+}
+
+
+missile.prototype = {
+    launch: function(px, py, dirx, diry) {
+        this.x = px;
+        this.y = py; 
+        this.dx = dirx; 
+        this.dy = diry;
+        this.flying = 2; 
+    }, 
+
+    move: function() { 
+        if (this.flying >1.0) {
+            this.x = this.x + this.dx; 
+            this.y = this.y + this.dy; 
+        }
+    },
+
+    hitWall: function() { 
+        var res = 0; 
+        if ((this.x<.2)&&(this.dx<0)) { res = 2; }
+        if ((this.y<.2)&&(this.dy<0)) { res = 2; }
+        if ((this.x>14.8)&&(this.dx>0)) { res = 2; }
+        if ((this.y>14.8)&&(this.dy>0)) { res = 2; }
+        return res; 
+    },
+
+    isOn: function(ax, ay) {
+        var res, sx, sy;
+        res = 0;  
+        sx = this.x-ax; 
+        sy = this.y-ay; 
+        if (((sx*sx)+(sy*sy))<.2) { res = 2; }
+        return res; 
+    },
+
+    isNextTo: function(ax, ay) {
+        var res, sx, sy;
+        res = 0;  
+        sx = this.x-ax; 
+        sy = this.y-ay; 
+        if (((sx*sx)+(sy*sy))<3) { res = 2; }
+        return res; 
+    }
+}
+
+
+

@@ -5,7 +5,7 @@
 <script type="text/javascript" src="microVision.js"></script>
 
 <script type="text/javascript">
-    var theM, bx, by, dbx, ballState, pins; 
+    var theM, bx, by, dbx, ballState, pins, didStrike; 
     var gameOver;  
 
     // bowling!
@@ -22,11 +22,64 @@
         }
     }
 
-    //. 3 5 7 . . .
+    //. 3 5 7 9 11 .
+
     //   7 8 9 t
     //    4 5 6
     //     2 3
     //      1
+    function updatePins(col, row) { 
+        didStrike = 0; 
+        switch (col) { 
+            case  3: 
+                if (row<1) { pins[7] = 0; } 
+                break; 
+            case  4: 
+                if (row<1) { pins[7]=0; pins[8]=0; } 
+                if (row<3) { pins[4]=0; } 
+                break; 
+            case  5: 
+                if (row<1) { pins[7]=0; pins[8]=0; pins[9]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; } 
+                if (row<5) { pins[2]=0; } 
+                break; 
+            case  6: 
+                if (row<1) { pins[7]=0; pins[8]=0; pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[2]=0; pins[3]=0; } 
+                if (row<7) { pins[1]=0; } 
+                didStrike = 2; 
+                break; 
+            case  7: 
+                if (row<1) { pins[8]=0; pins[9]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[2]=0; pins[3]=0; } 
+                if (row<7) { pins[1]=0; } 
+                break; 
+            case  8: 
+                if (row<1) { pins[7]=0; pins[8]=0; pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[2]=0; pins[3]=0; } 
+                if (row<7) { pins[1]=0; } 
+                didStrike = 2;
+                break; 
+            case  9: 
+                if (row<1) { pins[8]=0; pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[3]=0; } 
+                break; 
+            case  10: 
+                if (row<1) { pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[6]=0; } 
+                break; 
+            case  11: 
+                if (row<5) { pins[10]=0; } 
+                break; 
+        }
+
+    }
+
+
     function drawPins() { 
         if (pins[1]>1.0) { theM.plot(7, 6); }
         if (pins[2]>1.0) { theM.plot(6, 4); }
@@ -62,8 +115,12 @@
                 }
                 break;
             case 3: // results viewer 1
-                if (theM.spDn>1) { 
+                if (theM.wDn>1) { 
                     newState = 4; 
+                    if (didStrike>1) { 
+                        setPins();
+                        didStrike = 0; 
+                    }
                 }
                 break;
 
@@ -82,16 +139,20 @@
                 by = by -1; 
                 if (by<0) { 
                     newState = 7;
-                    setPins();  
                     by = 15; 
                 }
                 break;
-            case 8: 
-                if (theM.spDn>1) { newState = 0; }
+            case 7: 
+                if (theM.wDn>1) { 
+                    newState = 0; 
+                    setPins();  
+                    didStrike = 0; 
+                }
                 break;
         }
         ballState = newState;
         theM.plot(bx, by); 
+        theM.plot(15, ballState); 
     }
 
 
@@ -99,6 +160,7 @@
     function animator() {
         theM.wipe(); 
         moveBall(); 
+        updatePins(bx, by);
         drawPins(); 
         theM.redraw(); 
     }
@@ -121,6 +183,7 @@
         dbx = -1; 
         ballState = 0;
         by = 15; 
+        didStrike = 0; 
         setPins(); 
         gameOver = 0; 
         setInterval(animator, 50);  

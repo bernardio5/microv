@@ -40,27 +40,46 @@
     }
 
     function moveShot() {
-        var dx;  
+        var dx, px, py, bx, by, i, j, ind;  
         if (sf>1.0) { 
             sx = sx + sdx; 
             sy = sy + sdy; 
             if (bseq(sx,0)) { sdx = 1.0; }
             if (bseq(sy,15)) { sdx = -1.0; }
 
-            if (bseq(sy,14)) { 
+            if (bseq(sy,14)) { // second-to-bottom row; is the paddle there? 
                 dx = sx-myX;
                 if (dx*dx<0.1) { sdx = 0; sdy = -1; }
                 if ((0.1<=dx)&&(dx<1)) { sdx = 1; sdy = -1; }
                 if ((-.1>=dx)&&(dx>-1)) { sdx = -1; sdy = -1; }
             }
-            if (bseq(sy,15)) { 
+            if (bseq(sy,15)) { // bottom row; you missed 
                 sdx=0;
                 sdy=0;
+                sf = 0;
             }
-            if (14.8<sy) { 
-                sdx=0;
-                sdy=0;
-                sf=0;
+            // now: blocks 
+            px = sx+sdx; 
+            py = sy+sdy;
+            if ((1<py)&&(py<4)) { // in block zone
+            if (dy<-.8) { // going up
+                if (dx<-.8) { // up-left
+                    if (blocks[])
+                } else { 
+                    if (dx>0.8) { // up-right
+                    } else { 
+                    }
+                }
+            } else {
+
+            }
+
+            }
+            px = sx + sdx; 
+            py = sy + sdy;
+            if ((1<py)&&(py<4)) { // in block row 
+
+
             }
         }
         theM.plot(sx,sy); 
