@@ -119,6 +119,16 @@ function microVision(aCanvas) {
     this.mDn=0; 
     this.iDn=0; 
     this.spDn=0; 
+
+    this.wTap = 0; 
+    this.aTap = 0; 
+    this.sTap = 0; 
+    this.dTap = 0; 
+    this.jTap = 0; 
+    this.kTap = 0; 
+    this.mTap = 0; 
+    this.iTap = 0; 
+    this.spTap = 0; 
 }
 
 
@@ -137,20 +147,34 @@ microVision.prototype = {
             case 32: this.spDn = 2; break; 
         }
     },
+
     keyUp: function(evt) {
         this.plot(15,15);
         switch (evt.keyCode) {
-            case 87: this.wDn = 0; break; 
-            case 65: this.aDn = 0; break; 
-            case 83: this.sDn = 0; break; 
-            case 68: this.dDn = 0; break; 
-            case 74: this.jDn = 0; break; 
-            case 75: this.kDn = 0; break; 
-            case 73: this.iDn = 0; break; 
-            case 77: this.mDn = 0; break; 
-            case 32:this.spDn = 0; break; 
+            case 87: this.wDn = 0; this.wTap = 1; break; 
+            case 65: this.aDn = 0; this.aTap = 1; break; 
+            case 83: this.sDn = 0; this.sTap = 1; break; 
+            case 68: this.dDn = 0; this.dTap = 1; break; 
+            case 74: this.jDn = 0; this.jTap = 1; break; 
+            case 75: this.kDn = 0; this.kTap = 1; break; 
+            case 73: this.iDn = 0; this.mTap = 1; break; 
+            case 77: this.mDn = 0; this.iTap = 1; break; 
+            case 32:this.spDn = 0; this.spTap = 1; break; 
         }
     },
+
+    isTap: function() {
+
+    },
+
+
+    touchStart: function(evt) { 
+        var sx = evt.Touch.pageX/ 32.0;
+    },
+    touchEnd: function(evt) { 
+
+    },
+
     // draw tile at tx,ty at grid point x, y-- minimal default case
     drawOne: function(x, y) {
         this.sp.drawSprite(.9+(x*.5), 1.9+(y*.5), 15, 2);
@@ -164,6 +188,19 @@ microVision.prototype = {
         var ind = (y*16)+x; 
         this.pix[ind] = 0.0; 
     },
+
+    drawBlock: function(xlo, ylo, xsz, ysz) { 
+        var i, j; 
+
+        for (i=xlo; i<(xlo+xsz); i=i+1) {
+            for (j=ylo; j<(ylo+ysz); j=j+1) {
+                if ((-1<i)&&(i<16)&&(-1<j)&&(j<16)) { 
+                    this.plot(i, j); 
+                }
+            }
+        }
+    },
+
 
     read: function(x, y, onOff) {
         var ind = (y*16)+x; 

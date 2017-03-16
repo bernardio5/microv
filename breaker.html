@@ -9,6 +9,7 @@
     var gameOver;  
  
     // breakouter
+    // to do: collisions based on direction
 
     function shoot() { 
         if (sf<1.0) { 
@@ -53,26 +54,34 @@
                 if ((0.1<=dx)&&(dx<1)) { sdx = 1; sdy = -1; }
                 if ((-.1>=dx)&&(dx>-1)) { sdx = -1; sdy = -1; }
             }
+
             if (bseq(sy,15)) { // bottom row; you missed 
                 sdx=0;
                 sdy=0;
                 sf = 0;
             }
+
             // now: blocks 
             px = sx+sdx; 
             py = sy+sdy;
             if ((1<py)&&(py<4)) { // in block zone
-            if (dy<-.8) { // going up
-                if (dx<-.8) { // up-left
-                    if (blocks[])
-                } else { 
-                    if (dx>0.8) { // up-right
+                if (dy<-.8) { // going up
+                    if (dx<-.8) { // up-left
+                        // testing
+
                     } else { 
+                        if (dx>0.8) { // up-right
+                        } else { 
+
+
+                        }
+                    }
+                } else {
+                    if (dy>.8) { // going down
+                    } else { // can we go sideways? 
+
                     }
                 }
-            } else {
-
-            }
 
             }
             px = sx + sdx; 

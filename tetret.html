@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, blX, blY, blSh, nextBlSh, gameOver;  
+
+    // dropping blockthings
+
+    // 00    00  00     0  0  0 
+    // x0   0x    x0  0x0 0x0 0x0  0x00
+
+    // 
+
+    function drawBlock(x, y, spin, which) { 
+    }
+
+
+    function setForDown() { 
+        guyxs[0] = 6; 
+        guyxs[1] = 6; 
+        guyxs[2] = 6; 
+        guyxs[3] = 8; 
+        guyxs[4] = 10; 
+
+        guyys[0] = 4; 
+        guyys[1] = 6; 
+        guyys[2] = 8; 
+        guyys[3] = 6; 
+        guyys[4] = 6; 
+
+        myX = 4; 
+        myY = 6;
+    }
+
+
+    // 
+    function drawField() { 
+        
+        theM.drawBlock(0, 3, 16, 1); // sidelines
+        theM.drawBlock(0, 9, 16, 1);
+
+    }
+
+    function animator() {
+        theM.wipe(); 
+        drawField(); 
+        moveMe(); 
+        moveCtr = moveCtr - 1; 
+        if (moveCtr<1) { 
+            moveCtr = moveRate; 
+            moveGuys(); 
+        }
+        theM.redraw(); 
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        guyxs = []; 
+        guyys = []; 
+        setForDown(); 
+        fieldx = 20;
+        fieldSpan = 2;  
+        down = 1;
+        yardsToGo = 10; gameOver = 0; 
+        moveRate = 20; 
+        moveCtr = moveRate; 
+        setInterval(animator, 50);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</body>
+</html>

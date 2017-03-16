@@ -165,19 +165,19 @@
         theM.redraw(); 
     }
 
-    function keyDn(evt) { 
-        theM.keyDn(evt); 
-        if (evt.keyCode==32) { 
-            theM.plot(0,15);
-        } 
-    }
+    function keyDn(evt) { theM.keyDn(evt); }
     function keyUp(evt) { theM.keyUp(evt); }
+    function touchStart(evt) { theM.touchStart(evt); }
+    function touchEnd(evt) { theM.touchEnd(evt); }
 
     function startAnimation() { 
         var theCanvas = document.getElementById("sampleCanvas");
         theM = new microVision(theCanvas); 
         window.addEventListener("keydown", keyDn, false);
         window.addEventListener("keyup", keyUp, false);
+        window.addEventListener("touchStart", touchStart, false);
+        window.addEventListener("touchEnd", touchEnd, false);
+
         pins = new Array(); 
         bx = 7;
         dbx = -1; 

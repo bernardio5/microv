@@ -6,12 +6,13 @@
 
 <script type="text/javascript">
     var theM, myX, myY, sx, sy, sf, ax, ay, as, aPace, aCtr, aDir; 
-    var gameOver;  
+    var gameOver, sh1x, sh1y, sh2x, sh2y, sf1, sf2;  
+
     // space invadery
     // to do: their missiles, more of them
-
     function keyDn(evt) { theM.keyDn(evt); }
     function keyUp(evt) { theM.keyUp(evt); }
+
 
     function shoot() { 
         if (sf<1.0) { 
@@ -20,6 +21,7 @@
             sy = myY; 
         }
     }
+
 
     function moveMe() { 
         if (gameOver<1) { 
@@ -68,6 +70,7 @@
         return res; 
     }
 
+
     function hitsThem(x, y) { 
         var i, lx, ly; 
         var res = -2.0; 
@@ -87,6 +90,7 @@
         }
         return res; 
     }
+
 
     function moveThem() { 
         var i, lx, ly, ltSd, rtSd, notAllDead; 
@@ -126,6 +130,7 @@
         }
     }
 
+
     function animator() {
         theM.wipe(); 
         moveMe(); 
@@ -133,6 +138,7 @@
         moveThem(); 
         theM.redraw(); 
     }
+
 
     function startAnimation() { 
         var theCanvas = document.getElementById("sampleCanvas");
@@ -142,6 +148,7 @@
         myX = 3;
         myY = 15;
         sf =0; 
+        sh1x = -1; 
         initThem(); 
         gameOver = 0; 
         setInterval(animator, 50);  
