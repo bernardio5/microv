@@ -2,10 +2,11 @@
 
 This is the microv project README.
 
-I intend to emulate some games I played many years ago.
-None are finished. They are github’ed for the sake of source control
-and backup— laptops and beverages, you know. 
+The entire thing is an HTML tree. Other than the index, each HTML is a game. 
+I nailed the breakout, "raider", and "maze" ones. 
 
-They are not commented. I can’t see their value for anyone but myself.
+Looking at how little you need to have for the game to work. 
+Looking at how the original games were done. 
+A little bit of nostalgia. 
 
 NM
