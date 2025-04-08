@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+
+    var theM, xs, ys, vs, cs;
+
+    function placeStar(i) {
+        xs[i] = 4.0 + (Math.random() * 8.0);
+        ys[i] = 4.0 + (Math.random() * 8.0);
+        vs[i] = (Math.random()*.2)+0.02;
+        cs[i] = 3 + i%4;
+    }
+
+
+    function animator() {
+        var ix, iy, ctx, cty, dx, dy, a, b, v; 
+        theM.wipe(); 
+
+        ctx = 7.5; // move things away from the center
+        cty = 7.5; 
+        if (theM.wDn>1.0) { cty+=2.0; } // steering
+        if (theM.aDn>1.0) { ctx-=2.0; }
+        if (theM.sDn>1.0) { cty-=2.0; }
+        if (theM.dDn>1.0) { ctx+=2.0; }
+    
+        for (i=0; i<8; i+=1) {
+            a = xs[i] - ctx;
+            b = ys[i] - cty;
+            v = vs[i] / Math.sqrt(a*a+b*b);
+            dx = a*v;
+            dy = b*v;
+            xs[i] += a*v; 
+            ys[i] += b*v;
+            if ((xs[i]<0.0) || (ys[i]<0.0) || 
+                (xs[i]>16.0) || (ys[i]>16.0)) { placeStar(i); }
+            ix = Math.floor(xs[i]);
+            iy = Math.floor(ys[i]);
+            theM.plotc(ix, iy, cs[i]);
+        }
+        theM.redraw();  
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        xs = new Array();
+        ys = new Array();
+        vs = new Array();
+        cs = new Array();
+        var i; 
+        for (i=0; i<32; ++i) { 
+            placeStar(i);
+        }
+        setInterval(animator, 30);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+    <center>
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</center></body>
+</html>

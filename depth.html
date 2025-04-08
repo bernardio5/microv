@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, myX, dcX, dcY, exX, exY;
+    var s1x, s1y, s2x, s2y, s3x, s3y, ssx, ssy; 
+    var water, subs;
+
+    // submarine depth-charge PT-boat shit.
+    
+    function initSea() { 
+        var i;
+        for (i=0; i<16; ++i) { // sea surface
+            theM.plotc(i, 1, 3);
+        }
+        water = [];
+
+        for (i=0; i<32; ++i) { 
+            ix = Math.floor(Math.random()*16);
+            iy = Math.floor(Math.random()*14) + 2;
+            ind = (16*iy)+ix; 
+            water[i] = ind; 
+        }
+    }
+
+    function updateSea() { 
+        var i, ix, iy, ind, wy;
+        for (i=0; i<16; ++i) { // sea surface
+            theM.plotc(i, 1, 3);
+        }
+
+        wy=0; // layer to move
+        if (Math.random()<.5) {
+            wy = Math.floor(Math.random()*14)+2;
+            if (dcY == wy) { 
+                dcX = dcX+1;
+                if (dcX>15) { dcY=16; }
+            }   
+        }
+
+        for (i=0; i<32; ++i) { 
+            ix = water[i] %16;
+            iy = (water[i]-ix)/16;
+            if (iy==wy) {
+                ix=ix+1;
+                if (ix>15) { ix = 0; }
+                ind = (16*iy)+ix; 
+                water[i] = ind; 
+            }
+            theM.plotc(ix, iy, 3);
+        }
+    }
+
+    function updateMe() { 
+        if (dcY<16) { ++dcY; }
+        if ((theM.aDn>1)&&(myX>1)) { --myX; }
+        if ((theM.dDn>1)&&(myX<15)) { ++myX; }
+        if ((theM.sDn>1)&&(dcY>15)) { dcX=myX; dcY=0; }
+        if ((theM.wDn>1)&&(dcY<15)) { exX=dcX; exY=dcY; dcY=16; }
+
+        theM.plotc(myX, 0, 4);
+        theM.plotc(myX-1, 0, 4);
+        if (dcY<16) { theM.plotc(dcX, dcY, 2); }
+        if (exY<16) { 
+            if (exX<14) { theM.plotc(exX+1, exY+0, 6); } 
+            if (exX<15) { theM.plotc(exX+0, exY+0, 6); } 
+            if (exX>1)  { theM.plotc(exX-1, exY+0, 6); } 
+            exY = 16;
+        }
+    }
+
+
+    function mover() { 
+    }
+
+    
+    function animator() {
+        theM.wipe(); 
+        updateSea(); 
+        updateMe(); 
+        mover(); 
+        theM.redraw(); 
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        myX = 4;
+        dcY = 16;
+        exY = 16; 
+        initSea();
+        setInterval(animator, 500);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+<center>
+    <div class="container">
+        <div class="subCont">
+            <canvas id="sampleCanvas" width="640" height="640"></canvas>
+       </div>
+    </div>
+</center>
+</body>
+</html>

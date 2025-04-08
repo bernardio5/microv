@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, xs, ys, dxs, dys, cs;
+
+    function animator() {
+        var ix, iy; 
+        theM.wipe(); 
+        for (i=0; i<8; i+=1) {
+            xs[i] += dxs[i]; 
+            ys[i] += dys[i];
+            if (xs[i]<0.0) { xs[i]-=2.0*dxs[i]; dxs[i]*=-1.0; }
+            if (ys[i]<0.0) { ys[i]-=2.0*dys[i]; dys[i]*=-1.0; }
+            if (xs[i]>16.0) { xs[i]-=2.0*dxs[i]; dxs[i]*=-1.0; }
+            if (ys[i]>16.0) { ys[i]-=2.0*dys[i]; dys[i]*=-1.0; }
+            ix = Math.round(xs[i]);
+            iy = Math.round(ys[i]);
+            theM.plotc(ix, iy, cs[i]);
+        }
+        theM.redraw();  
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        xs = new Array();
+        ys = new Array();
+        dxs = new Array();
+        dys = new Array();
+        cs = new Array();
+        var i; 
+        for (i=0; i<32; ++i) { 
+            xs[i] = Math.random()*16;
+            ys[i] = Math.random()*16;
+            dxs[i] = 0.8 - Math.random()*1.6;
+            dys[i] = 0.8 - Math.random()*1.6;
+            cs[i] = 1+ Math.floor(Math.random()*6);
+        }
+        setInterval(animator, 30);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+    <center>
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</center></body>
+</html>

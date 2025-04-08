@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, bx, by, dbx, ballState, pins, didStrike; 
+    var gameOver, blinkCtr, blinkPace, blinkOn;  
+
+    // bowling!
+    // ballState: 0: first ready, 1: first throw, 2:second ready, 3:second throw
+
+    function setPins() { 
+        var i;
+        for (i=1; i<11; i=i+1) {
+            pins[i] = 2.0;
+        }
+    }
+
+    //. 3 5 7 9 11 .
+
+    //   7 8 9 t
+    //    4 5 6
+    //     2 3
+    //      1
+    function updatePins(col, row) { 
+        didStrike = 0; 
+        switch (col) { 
+            case  3: 
+                if (row<1) { pins[7] = 0; } 
+                break; 
+            case  4: 
+                if (row<1) { pins[7]=0; pins[8]=0; } 
+                if (row<3) { pins[4]=0; } 
+                break; 
+            case  5: 
+                if (row<1) { pins[7]=0; pins[8]=0; pins[9]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; } 
+                if (row<5) { pins[2]=0; } 
+                break; 
+            case  6: 
+                if (row<1) { pins[7]=0; pins[8]=0; pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[2]=0; pins[3]=0; } 
+                if (row<7) { pins[1]=0; } 
+                didStrike = 2; 
+                break; 
+            case  7: 
+                if (row<1) { pins[8]=0; pins[9]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[2]=0; pins[3]=0; } 
+                if (row<7) { pins[1]=0; } 
+                break; 
+            case  8: 
+                if (row<1) { pins[7]=0; pins[8]=0; pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[4]=0; pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[2]=0; pins[3]=0; } 
+                if (row<7) { pins[1]=0; } 
+                didStrike = 2;
+                break; 
+            case  9: 
+                if (row<1) { pins[8]=0; pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[5]=0; pins[6]=0; } 
+                if (row<5) { pins[3]=0; } 
+                break; 
+            case  10: 
+                if (row<1) { pins[9]=0; pins[10]=0; } 
+                if (row<3) { pins[6]=0; } 
+                break; 
+            case  11: 
+                if (row<5) { pins[10]=0; } 
+                break; 
+        }
+
+    }
+
+
+    function drawPins() { 
+        if (pins[1]>1.0) { theM.plotc(7, 6, 4); }
+        if (pins[2]>1.0) { theM.plotc(6, 4, 4); }
+        if (pins[3]>1.0) { theM.plotc(8, 4, 4); }
+        if (pins[4]>1.0) { theM.plotc(5, 2, 4); }
+        if (pins[5]>1.0) { theM.plotc(7, 2, 4); }
+        if (pins[6]>1.0) { theM.plotc(9, 2, 4); }
+        if (pins[7]>1.0) { theM.plotc(4, 0, 4); }
+        if (pins[8]>1.0) { theM.plotc(6, 0, 4); }
+        if (pins[9]>1.0) { theM.plotc(8, 0, 4); }
+        if (pins[10]>1.0) { theM.plotc(10, 0, 4); }
+    }
+
+
+    function moveBall() { 
+        var newState = ballState;
+        switch (ballState) { 
+            case 0: // ball start 1
+                bx = bx + dbx; 
+                if (bx<2) { dbx = 1; newState = 1; }
+                if (bx>13) { dbx = -1; newState = 1; }
+                break;
+            case 1: // ball bounce 1
+                bx = bx + dbx; 
+                if (bx<2) { dbx = 1; }
+                if (bx>13) { dbx = -1; }
+                if (theM.spDn>1) { newState = 2; }
+                break;
+            case 2: // ball rolling 1
+                by = by -1; 
+                if (by<0) { 
+                    newState = 3; 
+                    by = -1; 
+                }
+                break;
+            case 3: // results viewer 1
+                if (theM.wDn>1) { 
+                    newState = 4; 
+                    by = 15; 
+                    if (didStrike>1) { 
+                        setPins();
+                        didStrike = 0; 
+                    }
+                }
+                break;
+
+            case 4: // ball start 1
+                bx = bx + dbx; 
+                if (bx<2) { dbx = 1; newState = 5; }
+                if (bx>13) { dbx = -1; newState = 5; }
+                break;
+            case 5: 
+                bx = bx + dbx; 
+                if (bx<2) { dbx = 1; }
+                if (bx>12) { dbx = -1; }
+                if (theM.spDn>1) { newState = 6; }
+                break;
+            case 6:
+                by = by -1; 
+                if (by<0) { 
+                    newState = 7;
+                    by = -1; 
+                }
+                break;
+            case 7: 
+                if (theM.wDn>1) { 
+                    newState = 0; 
+                    setPins();  
+                    by = 15
+                    didStrike = 0; 
+                }
+                break;
+        }
+        ballState = newState;
+        theM.plot(bx, by); 
+    }
+
+
+
+    function animator() {
+        theM.wipe(); 
+        blinkCtr = blinkCtr -1; 
+        if (blinkCtr<1) {
+            blinkCtr = blinkPace;
+            if (blinkOn<1) { blinkOn=2; }
+            else { blinkOn=0; }
+        }
+
+        moveBall(); 
+        updatePins(bx, by);
+        drawPins(); 
+        theM.redraw(); 
+        // do something about this? 
+        if (blinkOn>1) { 
+            switch (ballState) {
+                case 1: theM.drawOne(0.4,18.6); break; 
+                case 3: theM.drawOne(12.6,18.6); break; 
+                case 5: theM.drawOne(0.4,18.6); break; 
+                case 7: theM.drawOne(12.6,18.6); break; 
+            }
+        }
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+    function touchStart(evt) { theM.touchStart(evt); }
+    function touchEnd(evt) { theM.touchEnd(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        window.addEventListener("touchStart", touchStart, false);
+        window.addEventListener("touchEnd", touchEnd, false);
+
+        pins = new Array(); 
+        bx = 7;
+        dbx = -1; 
+        ballState = 0;
+        by = 15; 
+        didStrike = 0; 
+        setPins(); 
+        gameOver = 0; 
+        blinkCtr=5; 
+        blinkPace=5; 
+        blinkOn=2;
+        setInterval(animator, 50);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+    <center>
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+   <center>
+</div><!-- container -->
+</body>
+</html>

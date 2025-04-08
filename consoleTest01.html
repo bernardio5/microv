@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, clock; 
+    
+    function doodle() { 
+        var i; 
+        sweep = (Math.floor(clock/4))%16;
+        for (i=0; i<16; i+=1) {
+            theM.plotc(i, sweep, 1);
+        }
+        for (i=0; i<16; i+=1) {
+            theM.plotc(sweep, i, 3);
+        }
+        for (i=0; i<16; i+=1) {
+            theM.plotc(sweep-i, i, 2);
+        }
+    }
+
+    function animator() {
+        theM.wipe(); 
+        doodle();
+        theM.redraw();  
+        clock = clock+1; 
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        clock = 0; 
+        setInterval(animator, 20);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+    <center>
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</center></body>
+</html>

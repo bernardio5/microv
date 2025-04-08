@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+
+    var theM, xs, ys, vs, cs, mx, my, mv, mz, mdx, mdy;
+
+    function placeStar(i) {
+        xs[i] = 4.0 + (Math.random() * 8.0);
+        ys[i] = 4.0 + (Math.random() * 8.0);
+        vs[i] = (Math.random()*.2)+0.02;
+        cs[i] = 6;
+    }
+
+    function moveStar(i, ctx, cty) {
+        var a, b, v, dx, dy, ix, iy;
+        a = xs[i] - ctx;
+        b = ys[i] - cty;
+        v = vs[i] / Math.sqrt(a*a+b*b);
+        dx = a*v;
+        dy = b*v;
+        xs[i] += a*v; 
+        ys[i] += b*v;
+        if ((xs[i]<0.0) || (ys[i]<0.0) || 
+            (xs[i]>16.0) || (ys[i]>16.0)) { placeStar(i); }
+        ix = Math.round(xs[i]);
+        iy = Math.round(ys[i]);
+        theM.plotc(ix, iy, cs[i]);
+    }
+
+
+    function placeMonster() {
+        mx = 4.0 + (Math.random() * 8.0);
+        my = 4.0 + (Math.random() * 8.0);
+        mv = (Math.random()*.2)+0.02;
+        mz = 300.0 + (Math.random() * 100.0);
+    }
+
+    function moveMonster(ctx, cty) {
+        var v, dx, dy, dist, ix, iy;
+        mz = mz - 1.0;
+        if (mz<0.0) { placeMonster(); }
+
+        closeness = 4.0 * (400.0 - mz) / 400.0; 
+        
+        dx = mx - ctx;
+        dy = my - cty;
+        dist = Math.sqrt(dx*dx+dy*dy);
+        if (dist<0.1) { dist = 0.1; }
+        v = (mv*closeness*0.125) / dist
+        mx += dx*v;
+        my += dx*v;
+        
+        if (Math.random()>closeness) { return; } 
+        ix = Math.round(mx + (Math.random()*closeness) - (closeness*0.5));
+        iy = Math.round(my + (Math.random()*closeness) - (closeness*0.5));
+        theM.plotc(ix, iy, 2);
+        if (closeness>1.5) { 
+            ix = Math.round(mx + (Math.random()*closeness) - (closeness*0.5));
+            iy = Math.round(my + (Math.random()*closeness) - (closeness*0.5));
+            theM.plotc(ix, iy, 2);
+        }
+        if (closeness>3.5) { 
+            ix = Math.round(mx + (Math.random()*closeness) - (closeness*0.5));
+            iy = Math.round(my + (Math.random()*closeness) - (closeness*0.5));
+            theM.plotc(ix, iy, 3);
+        }
+    }
+
+
+    function animator() {
+        var i, ix, iy, ctx, cty, dx, dy, a, b, v; 
+        theM.wipe(); 
+
+        ctx = 7.5; // move things away from the center
+        cty = 7.5; 
+        if (theM.wDn>1.0) { cty+=2.0; my-=0.1; } // steering
+        if (theM.aDn>1.0) { ctx-=2.0; mx+=0.1; }
+        if (theM.sDn>1.0) { cty-=2.0; my+=0.1; }
+        if (theM.dDn>1.0) { ctx+=2.0; mx-=0.1; }
+        for (i=0; i<8; i+=1) {
+            moveStar(i, ctx, cty);
+        }
+
+        moveMonster(ctx, cty);
+
+        ctx = Math.round(ctx + (Math.random()*1.6) -0.8);
+        cty = Math.round(cty + (Math.random()*1.6) -0.8);
+        theM.plotc(ctx, cty, 1);
+        theM.redraw();  
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+        xs = new Array();
+        ys = new Array();
+        vs = new Array();
+        cs = new Array();
+        var i; 
+        for (i=0; i<32; ++i) { 
+            placeStar(i);
+        }
+        placeMonster()
+        setInterval(animator, 30);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+    <center>
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</center></body>
+</html>

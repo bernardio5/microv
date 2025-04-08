@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="microVision.js"></script>
+
+<script type="text/javascript">
+    var theM, duck1, duck2, duckw1, duckw2, shot1, shot2, counter; 
+
+    // phaseron striker
+    // main loop: draw guns, update missiles. 
+    // if a missile is done, and counter is not done, relaunch and up counter
+    // test for collisions!
+    function mover() { 
+        if (duck1.flying>1) { 
+            duck1.move();
+            if (duck1.hitWall()>1) { 
+                duck1.flying = 0; 
+            }
+        }
+        if (duck2.flying>1) { 
+            duck2.move();
+            if (duck2.hitWall()>1) { 
+                duck2.flying = 0; 
+            }
+        }
+        if (shot1.flying>1) { 
+            shot1.move();
+            if (shot1.hitWall()>1) { 
+                shot1.flying = 0; 
+            }
+        }
+        if (shot2.flying>1) { 
+            shot2.move();
+            if (shot2.hitWall()>1) { 
+                shot2.flying = 0; 
+            }
+        }
+
+    }
+
+    function drawDuck(d){ 
+        var dx, dy; 
+        if (d.flying>1) { 
+            dx = d.x; 
+            dy = d.y; 
+            if ((dx>-2)&&(dx<17)) { theM.plotc(dx, dy,2); }
+            if ((dx>0)&&(dx<17)) { theM.plotc(dx-1, dy,2); }
+            if ((dx>-2)&&(dx<15)) { theM.plotc(dx+1, dy,2); }
+        }
+    }
+
+
+    function redrawer() { 
+        var i; 
+        // draw guns
+        theM.plotc(0,15,3);
+        theM.plotc(1,15,3);
+        theM.plotc(2,15,3);
+        theM.plotc(1,14,3);
+        theM.plotc(2,13,3);
+        theM.plotc(13,15,3);
+        theM.plotc(14,15,3);
+        theM.plotc(15,15,3);
+        theM.plotc(14,14,3);
+        theM.plotc(13,13,3);
+
+        // draw ducks
+        if (duck1.flying>1) { 
+            drawDuck(duck1); 
+        }
+        if (duck2.flying>1) { 
+            drawDuck(duck2); 
+        }
+        if (shot1.flying>1) { theM.plot(shot1.x, shot1.y); }
+        if (shot2.flying>1) { theM.plot(shot2.x, shot2.y); }
+    }
+
+    function duckLauncher(duck) { 
+        var nx, ny, ndx; 
+        if (Math.random()>.5) { 
+            nx=15;
+            ndx = -1;  
+            if (Math.random()>.7) { ndx = -2; }
+        } else { 
+            nx = 0; 
+            ndx = 1;
+            if (Math.random()>.7) { ndx = 2; }
+        }
+        ny = Math.floor(1 + Math.random()*8);
+        duck.launch(nx,ny,ndx,0); 
+    }
+
+    function animator() {
+        theM.wipe(); 
+        redrawer(); 
+        mover(); 
+
+        var newY, newX, newdx; 
+        if ((Math.random()<.05)&&(duck1.flying<1)) { 
+            duckLauncher(duck1); 
+        }
+        if ((Math.random()<.02)&&(duck2.flying<1)) { 
+            duckLauncher(duck2); 
+        }
+        if ((theM.dDn>1)&&(shot1.flying<1)) { 
+            shot1.launch(12,12, -1,-1);
+        }
+        if ((theM.aDn>1)&&(shot2.flying<1)) { 
+            shot2.launch(3,12, 1,-1);
+        }
+        if (shot1.flying>1) { 
+            if (duck1.flying>1) {
+                if (shot1.isOn(duck1.x, duck1.y)>0) {
+                    theM.plotc(duck1.x, duck1.y, 4);
+                    duck1.flying = 0; 
+                }
+                if (shot1.isOn(duck1.x-1, duck1.y)>0) {
+                    theM.plotc(duck1.x-1, duck1.y, 4);
+                    duck1.flying = 0; 
+                }
+                if (shot1.isOn(duck1.x+1, duck1.y)>0) {
+                    theM.plotc(duck1.x+1, duck1.y, 4);
+                    duck1.flying = 0; 
+                }
+            }
+            if (duck2.flying>1) {
+                if (shot1.isOn(duck2.x, duck2.y)>0) {
+                    theM.plotc(duck2.x, duck2.y, 4);
+                    duck2.flying = 0; 
+                }
+                if (shot1.isOn(duck2.x-1, duck2.y)>0) {
+                    theM.plotc(duck2.x-1, duck2.y, 4);
+                    duck2.flying = 0; 
+                }
+                if (shot1.isOn(duck2.x+1, duck2.y)>0) {
+                    theM.plotc(duck2.x+1, duck2.y, 4);
+                    duck2.flying = 0; 
+                }
+            }
+        }
+        if (shot2.flying>1) { 
+            if (duck1.flying>1) {
+                if (shot2.isOn(duck1.x, duck1.y)>0) {
+                    duck1.flying = 0; 
+                }
+            }
+            if (duck2.flying>1) {
+                if (shot2.isOn(duck2.x, duck2.y)>0) {
+                    duck2.flying = 0; 
+                }
+            }
+        }
+
+        theM.redraw(); 
+    }
+
+    function keyDn(evt) { theM.keyDn(evt); }
+    function keyUp(evt) { theM.keyUp(evt); }
+
+    function startAnimation() { 
+        var theCanvas = document.getElementById("sampleCanvas");
+        theM = new microVision(theCanvas); 
+        window.addEventListener("keydown", keyDn, false);
+        window.addEventListener("keyup", keyUp, false);
+
+        shot1 = new missile(); 
+        shot2 = new missile(); 
+        duck1 = new missile(); 
+        duck2 = new missile(); 
+        counter = 0; 
+        setInterval(animator, 120);  
+    }
+
+
+</script>
+</head>
+<body onLoad="startAnimation();">
+<div class="container">
+    <div class="subCont">
+        <canvas id="sampleCanvas" width="640" height="640"></canvas>
+   </div>
+</div><!-- container -->
+</body>
+</html>
